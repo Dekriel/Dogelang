@@ -39,7 +39,6 @@ class Compiler:
             pass
 
         elif self.txt[0] == ' ':
-            print("yes")
             while True:
                 if self.txt[0] == ' ':
                     self.txt.pop(0)
@@ -90,7 +89,6 @@ class Compiler:
             else:
                 SyntaxFlaw(self.full, 4, 'invalid syntax')
 
-            print(self.txt[2])
             for _ in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]:
                 if self.txt[2].startswith(_):
                     SyntaxFlaw(self.full, 10, 'Invalid Syntax')
@@ -208,7 +206,6 @@ class Compiler:
                     check_what = dogelangVariables[check_is]
 
                 if check_is == "==":
-                    print(f"{check_what} == {check_thing}")
                     if check_what == check_thing:
                         if check_HasScope:
                             for i in dogelangBlocks:
@@ -277,7 +274,6 @@ class Compiler:
                 x = f"(\"{dogelangVariables[raw2]}\")"
 
             ans = input(raw2)
-            print(ans)
 
         elif self.txt[0] == "$while":
             if self.txt[2] == "TRUE":

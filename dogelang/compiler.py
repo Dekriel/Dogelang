@@ -301,4 +301,4 @@ class Compiler:
                 pass
 
             else:
-                print("bruh")
+                print("Not identified :(")

@@ -4,7 +4,10 @@ from dogelang_errors.errors import *
 from parser import *
 
 # variables
+dogelangScopes = 0
+dogelangClosed = 0
 dogelangVariables = {}
+dogelangBlocks = []
 dogelangFunctions = {}
 ABOUT = {
     "$println":
@@ -13,14 +16,14 @@ ABOUT = {
     "$declare":
         "$declare ... = ...\n\tdeclares a variable with it's own value.\nList of different types you can create:\n\t- "
         "createList(): creates a array.\n\t- createDict: creates a dictionary.\n\t- createTuple(): creates an "
-        "immutable list. "
+        "immutable list. ",
 }
 
 
 class Compiler:
     def __init__(self, text):
         self.txt = text
-        self.OPEN_SCOPE = {}
+        self.OPEN_SCOPE = 0
         self.printtext = ""
         self.full = ""
         for i in self.txt:
@@ -29,6 +32,8 @@ class Compiler:
 
     def compile_text(self):
         global dogelangVariables
+        global dogelangBlocks
+        global dogelangScopes
 
         if not self.txt:
             pass
@@ -60,7 +65,6 @@ class Compiler:
             raw = x.replace("(", "")
             raw2 = raw.replace(")", "")
             if raw2 in dogelangVariables.keys():
-                print(True)
                 x = f"(\"{dogelangVariables[raw2]}\")"
 
             try:
@@ -82,6 +86,14 @@ class Compiler:
                     for i in range(6, len(self.txt)):
                         x += self.txt[i]
                     dogelangVariables[self.txt[2]] = x.strip('\"').replace("'", "")
+
+            else:
+                SyntaxFlaw(self.full, 4, 'invalid syntax')
+
+            print(self.txt[2])
+            for _ in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]:
+                if self.txt[2].startswith(_):
+                    SyntaxFlaw(self.full, 10, 'Invalid Syntax')
 
             if x == "createList()":
                 x = "[]"
@@ -168,7 +180,7 @@ class Compiler:
 
                 for i in strip2:
                     e += 1
-                    if i in [">=", "<=", "=="]:
+                    if i in [">=", "<=", "==", ">", "<"]:
                         check_is = i
 
                     elif i in [">=", "<=", "=="] and check_thing == "":
@@ -182,7 +194,7 @@ class Compiler:
                                     check_HasScope = True
                                     break
                                 else:
-                                    self.x += "\n" + a
+                                    dogelangBlocks.append(a)
                         else:
                             check_what += i
 
@@ -192,28 +204,52 @@ class Compiler:
                 if check_thing in dogelangVariables:
                     check_thing = dogelangVariables[check_thing]
 
-                if check_is in dogelangVariables:
-                    check_is = dogelangVariables[check_is]
+                if check_what in dogelangVariables:
+                    check_what = dogelangVariables[check_is]
 
                 if check_is == "==":
+                    print(f"{check_what} == {check_thing}")
                     if check_what == check_thing:
                         if check_HasScope:
-                            Compiler(parser(self.x).compiler_values()).compile_text()
+                            for i in dogelangBlocks:
+                                Compiler(parser(i[1:]).compiler_values()).compile_text()
 
-                elif check_what == ">":
-                    return check_thing > check_is
+                            dogelangBlocks = []
 
-                elif check_what == "<":
-                    return check_thing < check_is
+                elif check_is == ">":
+                    if check_what > check_thing:
+                        if check_HasScope:
+                            for i in dogelangBlocks:
+                                Compiler(parser(i[1:]).compiler_values()).compile_text()
 
-                elif check_what == "<=":
-                    return check_thing <= check_is
+                            dogelangBlocks = []
 
-                elif check_what == ">=":
-                    return check_thing >= check_is
+                elif check_is == "<":
+                    if check_what < check_thing:
+                        if check_HasScope:
+                            for i in dogelangBlocks:
+                                Compiler(parser(i[1:]).compiler_values()).compile_text()
 
+                            dogelangBlocks = []
+
+                elif check_is == "<=":
+                    if check_what <= check_thing:
+                        if check_HasScope:
+                            for i in dogelangBlocks:
+                                Compiler(parser(i[1:]).compiler_values()).compile_text()
+
+                            dogelangBlocks = []
+
+                elif check_is == ">=":
+                    if check_what >= check_thing:
+                        if check_HasScope:
+                            for i in dogelangBlocks:
+                                Compiler(parser(i[1:]).compiler_values()).compile_text()
+
+                            dogelangBlocks = []
                 else:
                     return None
+
             except IndexError:
                 SyntaxFlaw(self.full, len(self.full), "invalid syntax")
 
@@ -243,14 +279,26 @@ class Compiler:
             ans = input(raw2)
             print(ans)
 
-        elif self.txt[0] == "$fn":
-            x = ""
-            if self.txt[2] == "{":
-                pass
-
+        elif self.txt[0] == "$while":
+            if self.txt[2] == "TRUE":
+                for i in self.txt:
+                    if i == "{":
+                        while True:
+                            a = input("... ")
+                            if a == "}":
+                                break
+                            else:
+                                dogelangBlocks.append(a)
+            while True:
+                for i in dogelangBlocks:
+                    if i == "BREAK":
+                        dogelangBlocks = []
+                        break
+                    else:
+                        Compiler(parser(i[1:]).compiler_values()).compile_text()
         else:
             if self.txt[0] == "///":
                 pass
 
             else:
-                print(self.txt[0])
+                print("bruh")

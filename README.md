@@ -7,9 +7,17 @@ I recommend you *don't* install, because it's (as I said, experimental) and it b
 
 
 1.) Install python via python.org (latest version recommended)
+
+
 2.) Add python to PATH (very important)
+
+
 3.) `cd` to the correct directory (something like `~dogelang/dogelang` where you can see `shell.py` by using `dir` or `ls`)
+
+
 4.) `python shell.py shell`
+
+
 5.) have fun....
 
 

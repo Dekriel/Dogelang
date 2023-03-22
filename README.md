@@ -23,3 +23,5 @@ I recommend you *don't* install, because it's (as I said, experimental) and it b
 
 # Important notes + updates:
 I'll try to fix print statements, if statements, while loops, variable decleration etc. It's very messy and I see a heck **ton** of unneeded code.
+
+As of 22.03.23, I've decided I'll just leave this shitty ass code behind lol
